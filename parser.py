@@ -20,7 +20,14 @@ class Parser:
                 contents.append(self._parse(it))
             next(it)  # consume )
             return List(contents)
+        elif it.peek()[0] == "'":
+            next(it)
+            return quoted(self._parse(it))
         elif it.peek()[0] == "symbol":
             return Symbol(next(it)[1])
         else:
             return Number(next(it)[1])
+
+
+def quoted(element):
+    return List([Symbol("quote"), element])

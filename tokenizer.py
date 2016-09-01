@@ -9,7 +9,7 @@ class Tokenizer:
             return []
         if string[0] == " ":
             return self._tokenize(string[1:])
-        if string[0] in "()":
+        if string[0] in "'()":
             return [(string[0],)] + self._tokenize(string[1:])
         if string.startswith("nil"):
             return [("nil",)] + self._tokenize(string[3:])

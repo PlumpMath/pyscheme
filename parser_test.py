@@ -32,3 +32,6 @@ class ParserTest(unittest.TestCase):
 
     def test_06_can_parse_many_elements_list(self):
         self.assertParsing("(1 2)", equals=List([Number(1), Number(2)]))
+
+    def test_07_can_parse_quoted_symbols(self):
+        self.assertParsing("'a", equals=List([Symbol("quote"), Symbol("a")]))

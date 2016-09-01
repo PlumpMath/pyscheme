@@ -27,3 +27,6 @@ class TokenizerTest(unittest.TestCase):
 
     def test_tokenize_symbols(self):
         self.assertTokenizing("a ab c", equals=[("symbol", "a"), ("symbol", "ab"), ("symbol", "c")])
+
+    def test_tokenize_quotes(self):
+        self.assertTokenizing("'a", equals=[("'",), ("symbol", "a")])
