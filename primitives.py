@@ -93,9 +93,6 @@ class Symbol(Primitive):
     def __repr__(self):
         return self._name
 
-    def get_function(self):
-        return ARITHMETIC_SYMBOLS[self._name]
-
     def evaluate(self, context):
         name = self._name
         if name in context:
@@ -104,13 +101,6 @@ class Symbol(Primitive):
             return self
         else:
             raise Exception("Symbol '%s' not defined" % name)
-
-ARITHMETIC_SYMBOLS = {
-    "+": (lambda x, y: x + y),
-    "-": (lambda x, y: x - y),
-    "*": (lambda x, y: x * y),
-    "/": (lambda x, y: x / y)
-}
 
 
 class List(Primitive):
