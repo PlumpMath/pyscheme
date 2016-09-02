@@ -153,6 +153,7 @@ class List(Primitive):
 builtin = {
     "if": None,
     "quote": None,
+    ""
     "list": lambda parameters: List(parameters),
     "=": lambda parameters: Boolean(not parameters or all((p == parameters[0]).value() for p in parameters)),
     "+": lambda parameters: reduce(Number.__add__, parameters),

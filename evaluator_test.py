@@ -47,5 +47,8 @@ class EvaluatorTest(unittest.TestCase):
         self.assertEvaluating("(if true 1 2)", equals="1")
         self.assertEvaluating("(if false 1 2)", equals="2")
 
-    # def test_09_let_defines_a_value_for_a_symbol(self):
-    #     self.assertEvaluating("(let (a 1) a)", equals="1")
+    def test_09_list_defines_a_list(self):
+        self.assertEvaluating("(list 1 2 3)", equals="(1 2 3)")
+
+    # def test_10_let_defines_a_value_for_a_symbol(self):
+    #     self.assertEvaluating("(let ((a 1)) a)", equals="1")
