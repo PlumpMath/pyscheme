@@ -127,6 +127,12 @@ class List(Primitive):
             return Boolean(not operands or all((o == operands[0]).value() for o in operands))
         if name == "not":
             return Boolean(not operands[0].value())
+        if name == "if":
+            assert 2 <= len(operands) <= 3, "if must have one condition and one or two clauses"
+            if operands[0].value():
+                return operands[1]
+            else:
+                return operands[2]
         raise Exception("can't evaluate symbol '%s'" % name)
 
     def __repr__(self):
