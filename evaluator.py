@@ -2,5 +2,5 @@
 
 class Evaluator:
 
-    def evaluate(self, expression):
-        return expression.evaluate()
+    def evaluate(self, expression, context):
+        return expression.evaluate(context)

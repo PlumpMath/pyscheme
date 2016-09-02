@@ -8,7 +8,8 @@ class EvaluatorTest(unittest.TestCase):
     def assertEvaluating(self, expr1, equals):
         p = Parser()
         ev = Evaluator()
-        self.assertEquals(ev.evaluate(p.parse(expr1)), ev.evaluate(p.parse(equals)))
+        context = {}
+        self.assertEquals(ev.evaluate(p.parse(expr1), context), p.parse(equals))
 
     def test_00_nil_evaluates_to_nil(self):
         self.assertEvaluating("nil", equals="nil")
@@ -17,7 +18,7 @@ class EvaluatorTest(unittest.TestCase):
         self.assertEvaluating("4", equals="4")
 
     def test_02_quoted_symbol_evaluates_to_quotation(self):
-        self.assertEvaluating("'(a 1)", equals="(a 1)")
+        self.assertEvaluating("'(1 2)", equals="(1 2)")
 
     def test_03_primitive_function_plus_evaluates_the_sum(self):
         self.assertEvaluating("(+ 3)", equals="3")
@@ -45,3 +46,6 @@ class EvaluatorTest(unittest.TestCase):
     def test_08_if_reduces_to_correct_clause(self):
         self.assertEvaluating("(if true 1 2)", equals="1")
         self.assertEvaluating("(if false 1 2)", equals="2")
+
+    # def test_09_let_defines_a_value_for_a_symbol(self):
+    #     self.assertEvaluating("(let (a 1) a)", equals="1")
