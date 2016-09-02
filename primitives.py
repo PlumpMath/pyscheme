@@ -125,6 +125,9 @@ class List(Primitive):
             return reduce(operand.get_function(), operands)
         if name == "=":
             return Boolean(not operands or all((o == operands[0]).value() for o in operands))
+        if name == "not":
+            return Boolean(not operands[0].value())
+        raise Exception("can't evaluate symbol '%s'" % name)
 
     def __repr__(self):
         return "(" + " ".join(map(str, self._contents)) + ")"

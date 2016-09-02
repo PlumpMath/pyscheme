@@ -37,3 +37,7 @@ class EvaluatorTest(unittest.TestCase):
         self.assertEvaluating("(=)", equals="true")
         self.assertEvaluating("(= 3)", equals="true")
         self.assertEvaluating("(= 3 3 3)", equals="true")
+
+    def test_07_primitive_not(self):
+        self.assertEvaluating("(not true)", equals="false")
+        self.assertEvaluating("(not false)", equals="true")
