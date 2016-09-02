@@ -17,5 +17,29 @@ class EvaluatorTest(unittest.TestCase):
     def test_02_quoted_symbol_evaluates_to_quotation(self):
         ev = Evaluator()
         expr = List([Symbol("a"), Number(1)])
-        print(ev.evaluate(quoted(expr)))
         self.assertEqual(ev.evaluate(quoted(expr)), expr)
+
+    def test_03_primitive_function_plus_evaluates_the_sum(self):
+        ev = Evaluator()
+        expr = List([Symbol("+"), Number(3)])
+        self.assertEqual(ev.evaluate(expr), Number(3))
+
+        expr = List([Symbol("+"), Number(3), Number(5)])
+        self.assertEqual(ev.evaluate(expr), Number(8))
+
+        expr = List([Symbol("+"), Number(3), Number(5), Number(-1)])
+        self.assertEqual(ev.evaluate(expr), Number(7))
+
+    def test_04_primitive_function_minus_evaluates_the_difference(self):
+        ev = Evaluator()
+        expr = List([Symbol("-"), Number(3), Number(5)])
+        self.assertEqual(ev.evaluate(expr), Number(-2))
+
+    def test_05_other_primitive_arithmetic_functions(self):
+        ev = Evaluator()
+        expr = List([Symbol("*"), Number(3), Number(5)])
+        self.assertEqual(ev.evaluate(expr), Number(15))
+
+        expr = List([Symbol("/"), Number(10), Number(2)])
+        self.assertEqual(ev.evaluate(expr), Number(5))
+

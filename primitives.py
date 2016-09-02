@@ -1,3 +1,5 @@
+from functools import reduce
+
 
 class Primitive:
 
@@ -34,6 +36,18 @@ class Number(Primitive):
     def __repr__(self):
         return str(self._value)
 
+    def __add__(self, other):
+        return Number(self._value + other.value())
+
+    def __sub__(self, other):
+        return Number(self._value - other.value())
+
+    def __mul__(self, other):
+        return Number(self._value * other.value())
+
+    def __truediv__(self, other):
+        return Number(self._value / other.value())
+
 
 class Symbol(Primitive):
 
@@ -49,6 +63,19 @@ class Symbol(Primitive):
     def __repr__(self):
         return self._name
 
+    def is_arithmetic(self):
+        return self._name in ARITHMETIC_SYMBOLS
+
+    def get_function(self):
+        return ARITHMETIC_SYMBOLS[self._name]
+
+
+ARITHMETIC_SYMBOLS = {
+    "+": (lambda x, y: x + y),
+    "-": (lambda x, y: x - y),
+    "*": (lambda x, y: x * y),
+    "/": (lambda x, y: x / y)
+}
 
 class List(Primitive):
 
@@ -65,7 +92,10 @@ class List(Primitive):
         # quoted only
         operand = self._contents[0]
         operands = self._contents[1:]
-        return operands[0]
+        if operand == Symbol("quote"):
+            return operands[0]
+        if operand.is_arithmetic():
+            return reduce(operand.get_function(), operands)
 
     def __repr__(self):
         return "(" + " ".join(map(str, self._contents)) + ")"
