@@ -30,3 +30,6 @@ class TokenizerTest(unittest.TestCase):
 
     def test_tokenize_quotes(self):
         self.assertTokenizing("'a", equals=[("'",), ("symbol", "a")])
+
+    def test_tokenize_minus_symbol(self):
+        self.assertTokenizing("- 1", equals=[("symbol", "-"), ("number", 1)])
