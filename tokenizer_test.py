@@ -33,3 +33,6 @@ class TokenizerTest(unittest.TestCase):
 
     def test_tokenize_minus_symbol(self):
         self.assertTokenizing("- 1", equals=[("symbol", "-"), ("number", 1)])
+
+    def test_tokenize_list_single_element(self):
+        self.assertTokenizing("(=)", equals=[("(",), ("symbol", "="), (")",)])

@@ -28,7 +28,7 @@ class Tokenizer:
                 return [("number", eval(s))] + self._tokenize(string)
 
         # symbol
-        while string and string[0] != " ":
+        while string and string[0] not in " ()":
             s += string[0]
             string = string[1:]
         return [("symbol", s)] + self._tokenize(string)
