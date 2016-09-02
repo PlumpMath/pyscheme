@@ -48,6 +48,33 @@ class Number(Primitive):
     def __truediv__(self, other):
         return Number(self._value / other.value())
 
+    def __eq__(self, other):
+        return Boolean(self._value == other.value())
+
+
+class Boolean(Primitive):
+
+    def __init__(self, value):
+        self._value = value
+
+    def value(self):
+        return self._value
+
+    def __eq__(self, other):
+        return self._value == other.value()
+
+    def __and__(self, other):
+        return self._value and other.value()
+
+    def __or__(self, other):
+        return self._value or other.value()
+
+    def __repr__(self):
+        return str(self._value).lower()
+
+    def evaluate(self):
+        return self
+
 
 class Symbol(Primitive):
 
@@ -63,9 +90,6 @@ class Symbol(Primitive):
     def __repr__(self):
         return self._name
 
-    def is_arithmetic(self):
-        return self._name in ARITHMETIC_SYMBOLS
-
     def get_function(self):
         return ARITHMETIC_SYMBOLS[self._name]
 
@@ -76,6 +100,7 @@ ARITHMETIC_SYMBOLS = {
     "*": (lambda x, y: x * y),
     "/": (lambda x, y: x / y)
 }
+
 
 class List(Primitive):
 
@@ -92,10 +117,14 @@ class List(Primitive):
         # quoted only
         operand = self._contents[0]
         operands = self._contents[1:]
-        if operand == Symbol("quote"):
+        assert(isinstance(operand, Symbol))
+        name = operand.name()
+        if name == "quote":
             return operands[0]
-        if operand.is_arithmetic():
+        if name in ARITHMETIC_SYMBOLS:
             return reduce(operand.get_function(), operands)
+        if name == "=":
+            return Boolean(not operands or all((o == operands[0]).value() for o in operands))
 
     def __repr__(self):
         return "(" + " ".join(map(str, self._contents)) + ")"

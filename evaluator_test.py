@@ -1,4 +1,3 @@
-from primitives import *
 from evaluator import Evaluator
 from parser import Parser
 import unittest
@@ -32,4 +31,6 @@ class EvaluatorTest(unittest.TestCase):
         self.assertEvaluating("(* 3 5)", equals="15")
         self.assertEvaluating("(/ 10 2)", equals="5")
 
-
+    def test_06_primitive_arithmetic_comparison_operations(self):
+        self.assertEvaluating("(= 3 3)", equals="true")
+        self.assertEvaluating("(= 3 4)", equals="false")

@@ -35,3 +35,7 @@ class ParserTest(unittest.TestCase):
 
     def test_07_can_parse_quoted_symbols(self):
         self.assertParsing("'a", equals=List([Symbol("quote"), Symbol("a")]))
+
+    def test_08_can_parse_boolean_literals(self):
+        self.assertParsing("true", equals=Boolean(True))
+        self.assertParsing("false", equals=Boolean(False))

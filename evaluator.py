@@ -1,4 +1,3 @@
-from primitives import *
 
 
 class Evaluator:

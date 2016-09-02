@@ -24,7 +24,10 @@ class Parser:
             next(it)
             return quoted(self._parse(it))
         elif it.peek()[0] == "symbol":
-            return Symbol(next(it)[1])
+            if it.peek()[1] in ("true", "false"):
+                return Boolean(next(it)[1] == "true")
+            else:
+                return Symbol(next(it)[1])
         else:
             return Number(next(it)[1])
 
