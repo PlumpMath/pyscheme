@@ -1,4 +1,5 @@
 from functools import reduce
+# from more_itertools import peekable
 
 
 class Primitive:
@@ -123,13 +124,13 @@ class List(Primitive):
         assert isinstance(operator, Symbol)
         if name == "if":
             assert 2 <= len(rest) <= 3, "`if` must have one condition and one or two clauses"
-            if rest[0].value():
-                return rest[1].evaluate(context)
-            else:
-                return rest[2].evaluate(context)
+            return evaluate_if(rest[0], rest[1:3], context)
         elif name == "quote":
             assert len(rest) == 1, "`quote` must have one parameter"
             return rest[0]
+        elif name == "let":
+            assert len(rest) == 2, "`let` must have two parameters"
+            return evaluate_let(rest[0], rest[1], context)
         parameters = list(map(lambda e: e.evaluate(context), rest))
         if name in builtin:
             return builtin[name](parameters)
@@ -143,7 +144,7 @@ class List(Primitive):
 builtin = {
     "if": None,
     "quote": None,
-    ""
+    "let": None,
     "list": lambda parameters: List(parameters),
     "=": lambda parameters: Boolean(not parameters or all((p == parameters[0]).value() for p in parameters)),
     "+": lambda parameters: reduce(Number.__add__, parameters),
@@ -152,3 +153,23 @@ builtin = {
     "/": lambda parameters: reduce(Number.__truediv__, parameters),
     "not": lambda parameters: Boolean(not parameters[0].value())
 }
+
+
+def evaluate_if(condition, clauses, context):
+    selected_clause = clauses[0] if condition.value() else clauses[1]
+    return selected_clause.evaluate(context)
+
+
+def evaluate_let(definitions, code, outer_context):
+    z = outer_context.copy()
+    z.update(parse_definitions(definitions))
+    return code.evaluate(z)
+
+
+def parse_definitions(definitions):
+    # ((a b) (c d) ...)
+    result = {}
+    for key_value in map(List.contents, definitions.contents()):
+        assert len(key_value) == 2
+        result[key_value[0].name()] = key_value[1]
+    return result
