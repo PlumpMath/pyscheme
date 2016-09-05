@@ -1,5 +1,4 @@
 from functools import reduce
-# from more_itertools import peekable
 
 
 class Primitive:
@@ -120,22 +119,30 @@ class List(Primitive):
         rest = self._contents[1:]
 
         operator = first.evaluate(context)
-        name = operator.name()
-        assert isinstance(operator, Symbol)
-        if name == "if":
-            assert 2 <= len(rest) <= 3, "`if` must have one condition and one or two clauses"
-            return evaluate_if(rest[0], rest[1:3], context)
-        elif name == "quote":
-            assert len(rest) == 1, "`quote` must have one parameter"
-            return rest[0]
-        elif name == "let":
-            assert len(rest) == 2, "`let` must have two parameters"
-            return evaluate_let(rest[0], rest[1], context)
-        parameters = list(map(lambda e: e.evaluate(context), rest))
-        if name in builtin:
-            return builtin[name](parameters)
+        if isinstance(operator, Symbol):
+            name = operator.name()
+            if name == "if":
+                assert 2 <= len(rest) <= 3, "`if` must have one condition and one or two clauses"
+                return evaluate_if(rest[0], rest[1:3], context)
+            elif name == "quote":
+                assert len(rest) == 1, "`quote` must have one parameter"
+                return rest[0]
+            elif name == "let":
+                assert len(rest) == 2, "`let` must have two parameters"
+                return evaluate_let(rest[0], rest[1], context)
+            elif name == "lambda":
+                assert len(rest) == 2, "`lambda` must have two parameters"
+                return Lambda(rest[0], rest[1])
+            parameters = list(map(lambda e: e.evaluate(context), rest))
+            if name in builtin:
+                return builtin[name](parameters)
+            else:
+                raise Exception("can't evaluate symbol '%s'" % name)
+        elif isinstance(operator, Lambda):
+            parameters = list(map(lambda e: e.evaluate(context), rest))
+            return operator.apply(parameters, context)
         else:
-            raise Exception("can't evaluate symbol '%s'" % name)
+            raise Exception("can't evaluate '%s'" % operator)
 
     def __repr__(self):
         return "(" + " ".join(map(str, self._contents)) + ")"
@@ -145,6 +152,7 @@ builtin = {
     "if": None,
     "quote": None,
     "let": None,
+    "lambda": None,
     "list": lambda parameters: List(parameters),
     "=": lambda parameters: Boolean(not parameters or all((p == parameters[0]).value() for p in parameters)),
     "+": lambda parameters: reduce(Number.__add__, parameters),
@@ -166,6 +174,28 @@ def evaluate_let(definitions, code, outer_context):
     return code.evaluate(z)
 
 
+class Lambda(Primitive):
+
+    def __init__(self, parameter_list, code):
+        self.parameter_list = parameter_list
+        self.code = code
+
+    def __eq__(self, other):
+        return self.parameter_list == other.parameter_list \
+               and self.code == other.code
+
+    def apply(self, arguments, outer_context):
+        z = outer_context.copy()
+        z.update(bind_arguments(self.parameter_list, arguments))
+        return self.code.evaluate(z)
+
+    def evaluate(self, context):
+        return self
+
+    def __repr__(self):
+        return "(lambda " + self.parameter_list + " " + self.code + ")"
+
+
 def parse_definitions(definitions):
     # ((a b) (c d) ...)
     result = {}
@@ -173,3 +203,9 @@ def parse_definitions(definitions):
         assert len(key_value) == 2
         result[key_value[0].name()] = key_value[1]
     return result
+
+
+def bind_arguments(parameter_list, arguments):
+    # (a b c d)
+    assert len(parameter_list.contents()) == len(arguments)
+    return dict(zip(map(Symbol.name, parameter_list.contents()), arguments))
