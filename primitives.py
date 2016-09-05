@@ -4,6 +4,9 @@ from functools import reduce
 class Primitive:
 
     def __eq__(self, other):
+        return str(self) == str(other)
+
+    def __repr__(self):
         raise NotImplementedError
 
     def evaluate(self, context):
@@ -11,9 +14,6 @@ class Primitive:
 
 
 class Nil(Primitive):
-
-    def __eq__(self, other):
-        return isinstance(other, Nil)
 
     def evaluate(self, context):
         return self
@@ -29,9 +29,6 @@ class Number(Primitive):
 
     def value(self):
         return self._value
-
-    def __eq__(self, other):
-        return self._value == other.value()
 
     def evaluate(self, context):
         return self
@@ -49,10 +46,7 @@ class Number(Primitive):
         return Number(self._value * other.value())
 
     def __truediv__(self, other):
-        return Number(self._value / other.value())
-
-    def __eq__(self, other):
-        return Boolean(self._value == other.value())
+        return Number(self._value // other.value())
 
 
 class Boolean(Primitive):
@@ -62,9 +56,6 @@ class Boolean(Primitive):
 
     def value(self):
         return self._value
-
-    def __eq__(self, other):
-        return self._value == other.value()
 
     def __and__(self, other):
         return self._value and other.value()
@@ -87,9 +78,6 @@ class Symbol(Primitive):
     def name(self):
         return self._name
 
-    def __eq__(self, other):
-        return self._name == other.name()
-
     def __repr__(self):
         return self._name
 
@@ -110,9 +98,6 @@ class List(Primitive):
 
     def contents(self):
         return self._contents[:]
-
-    def __eq__(self, other):
-        return self._contents == other.contents()
 
     def evaluate(self, context):
         first = self._contents[0]
@@ -154,7 +139,7 @@ builtin = {
     "let": None,
     "lambda": None,
     "list": lambda parameters: List(parameters),
-    "=": lambda parameters: Boolean(not parameters or all((p == parameters[0]).value() for p in parameters)),
+    "=": lambda parameters: Boolean(not parameters or all(p == parameters[0] for p in parameters)),
     "+": lambda parameters: reduce(Number.__add__, parameters),
     "-": lambda parameters: reduce(Number.__sub__, parameters),
     "*": lambda parameters: reduce(Number.__mul__, parameters),
@@ -179,10 +164,6 @@ class Lambda(Primitive):
     def __init__(self, parameter_list, code):
         self.parameter_list = parameter_list
         self.code = code
-
-    def __eq__(self, other):
-        return self.parameter_list == other.parameter_list \
-               and self.code == other.code
 
     def apply(self, arguments, outer_context):
         z = outer_context.copy()
@@ -222,9 +203,6 @@ class StatementList(Primitive):
         for statement in self.statements:
             last_value = statement.evaluate(context)
         return last_value
-
-    def __eq__(self, other):
-        return self.statements == other.statements
 
     def __repr__(self):
         return "\n".join(map(str, self.statements))
