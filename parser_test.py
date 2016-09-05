@@ -8,8 +8,11 @@ class ParserTest(unittest.TestCase):
     def setUp(self):
         self.p = Parser()
 
+    def assertParsingMany(self, source, equals):
+        self.assertEqual(self.p.parse(source), StatementList(equals))
+
     def assertParsing(self, source, equals):
-        self.assertEqual(self.p.parse(source), equals)
+        self.assertParsingMany(source, [equals])
 
     def test_00_can_parse_nil(self):
         self.assertParsing("nil", equals=Nil())
@@ -39,3 +42,6 @@ class ParserTest(unittest.TestCase):
     def test_08_can_parse_boolean_literals(self):
         self.assertParsing("true", equals=Boolean(True))
         self.assertParsing("false", equals=Boolean(False))
+
+    def test_09_can_parse_multiple_statements(self):
+        self.assertParsingMany("2\n1", equals=[Number(2), Number(1)])

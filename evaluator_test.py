@@ -55,3 +55,6 @@ class EvaluatorTest(unittest.TestCase):
 
     def test_11_lambda_defines_an_adhoc_function(self):
         self.assertEvaluating("((lambda (x) (+ x 1)) 1)", equals="2")
+
+    def test_12_multiline_statements_return_result_of_last_one(self):
+        self.assertEvaluating("1\n2", equals="2")

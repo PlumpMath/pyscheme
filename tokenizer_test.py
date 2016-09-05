@@ -36,3 +36,7 @@ class TokenizerTest(unittest.TestCase):
 
     def test_tokenize_list_single_element(self):
         self.assertTokenizing("(=)", equals=[("(",), ("symbol", "="), (")",)])
+
+    def test_tokenize_ignores_newlines(self):
+        self.assertTokenizing("1\n2", equals=[("number", 1), ("number", 2)])
+

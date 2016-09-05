@@ -2,7 +2,7 @@
 class Tokenizer:
 
     def tokenize(self, string):
-        return self._tokenize(string)
+        return self._tokenize(string.replace("\n", " "))
 
     def _tokenize(self, string):
         if not string:

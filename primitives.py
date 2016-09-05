@@ -209,3 +209,22 @@ def bind_arguments(parameter_list, arguments):
     # (a b c d)
     assert len(parameter_list.contents()) == len(arguments)
     return dict(zip(map(Symbol.name, parameter_list.contents()), arguments))
+
+
+class StatementList(Primitive):
+
+    def __init__(self, statements):
+        self.statements = statements
+
+    def evaluate(self, outer_context):
+        context = outer_context.copy()
+        last_value = None
+        for statement in self.statements:
+            last_value = statement.evaluate(context)
+        return last_value
+
+    def __eq__(self, other):
+        return self.statements == other.statements
+
+    def __repr__(self):
+        return "\n".join(map(str, self.statements))
