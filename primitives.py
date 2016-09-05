@@ -107,17 +107,23 @@ class List(Primitive):
         if isinstance(operator, Symbol):
             name = operator.name()
             if name == "if":
-                assert 2 <= len(rest) <= 3, "`if` must have one condition and one or two clauses"
+                assert 2 <= len(rest) <= 3, "`if` must have 1 condition and 1 or 2 clauses"
                 return evaluate_if(rest[0], rest[1:3], context)
             elif name == "quote":
-                assert len(rest) == 1, "`quote` must have one parameter"
+                assert len(rest) == 1, "`quote` must have 1 parameter"
                 return rest[0]
             elif name == "let":
-                assert len(rest) == 2, "`let` must have two parameters"
+                assert len(rest) == 2, "`let` must have 2 parameters"
                 return evaluate_let(rest[0], rest[1], context)
             elif name == "lambda":
-                assert len(rest) == 2, "`lambda` must have two parameters"
-                return Lambda(rest[0], rest[1])
+                assert len(rest) == 2, "`lambda` must have 2 parameters"
+                return Lambda(parameter_list=rest[0], code=rest[1])
+            elif name == "define":
+                assert len(rest) == 3, "`define` must have 3 parameters"
+                name = rest[0].name()
+                fun = Lambda(parameter_list=rest[1], code=rest[2])
+                context[name] = fun
+                return fun
             parameters = list(map(lambda e: e.evaluate(context), rest))
             if name in builtin:
                 return builtin[name](parameters)
@@ -138,6 +144,7 @@ builtin = {
     "quote": None,
     "let": None,
     "lambda": None,
+    "define": None,
     "list": lambda parameters: List(parameters),
     "=": lambda parameters: Boolean(not parameters or all(p == parameters[0] for p in parameters)),
     "+": lambda parameters: reduce(Number.__add__, parameters),

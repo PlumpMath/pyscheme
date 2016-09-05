@@ -58,3 +58,6 @@ class EvaluatorTest(unittest.TestCase):
 
     def test_12_multiline_statements_return_result_of_last_one(self):
         self.assertEvaluating("1\n2", equals="2")
+
+    def test_13_define_defines_an_named_function(self):
+        self.assertEvaluating("(define d (x) (+ x 1))\n(d 1)", equals="2")
