@@ -181,7 +181,7 @@ class Lambda(Primitive):
         return self
 
     def __repr__(self):
-        return "(lambda " + self.parameter_list + " " + self.code + ")"
+        return "(lambda " + str(self.parameter_list) + " " + str(self.code) + ")"
 
 
 def parse_definitions(definitions):
@@ -204,8 +204,8 @@ class StatementList(Primitive):
     def __init__(self, statements):
         self.statements = statements
 
-    def evaluate(self, outer_context):
-        context = outer_context.copy()
+    def evaluate(self, outer_context, mutate_outer_context=False):
+        context = outer_context if mutate_outer_context else outer_context.copy()
         last_value = None
         for statement in self.statements:
             last_value = statement.evaluate(context)

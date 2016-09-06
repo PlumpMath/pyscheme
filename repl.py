@@ -18,7 +18,7 @@ while True:
         try:
             XXX = parser.parse(user_input)
             try:
-                XYY = evaluator.evaluate(XXX, context)
+                XYY = XXX.evaluate(context, mutate_outer_context=True)
                 print("=> " + str(XYY))
                 print("context: " + str(context))
             except Exception:
