@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from evaluator import Evaluator
 from parser import Parser
 
 initial_context = {}
@@ -7,7 +6,6 @@ initial_context = {}
 context = initial_context.copy()
 
 parser = Parser()
-evaluator = Evaluator()
 
 print("Pyscheme REPL")
 while True:
