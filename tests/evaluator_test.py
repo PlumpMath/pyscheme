@@ -1,4 +1,3 @@
-from evaluator import Evaluator
 from parser import Parser
 import unittest
 
@@ -7,9 +6,8 @@ class EvaluatorTest(unittest.TestCase):
 
     def assertEvaluating(self, expr1, equals):
         p = Parser()
-        ev = Evaluator()
         context = {}
-        self.assertEquals(ev.evaluate(p.parse(expr1), context), p.parse(equals))
+        self.assertEquals(p.parse(expr1).evaluate(context), p.parse(equals))
 
     def test_00_nil_evaluates_to_nil(self):
         self.assertEvaluating("nil", equals="nil")
