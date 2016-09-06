@@ -1,4 +1,5 @@
 from functools import reduce
+from errors import *
 
 
 class Primitive:
@@ -88,7 +89,7 @@ class Symbol(Primitive):
         elif name in builtin:
             return self
         else:
-            raise Exception("Symbol '%s' not defined" % name)
+            raise PySchemeError(SYMBOL_NOT_FOUND + " (" + name + ")")
 
 
 class List(Primitive):

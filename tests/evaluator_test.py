@@ -1,4 +1,5 @@
 from parser import Parser
+from errors import *
 import unittest
 
 
@@ -8,6 +9,12 @@ class EvaluatorTest(unittest.TestCase):
         p = Parser()
         context = {}
         self.assertEquals(p.parse(expr1).evaluate(context), p.parse(equals))
+
+    def assertDoing(self, expr1, raises):
+        with self.assertRaisesRegex(PySchemeError, "^" + raises):
+            p = Parser()
+            context = {}
+            p.parse(expr1).evaluate(context)
 
     def test_00_nil_evaluates_to_nil(self):
         self.assertEvaluating("nil", equals="nil")
@@ -59,3 +66,6 @@ class EvaluatorTest(unittest.TestCase):
 
     def test_13_define_defines_an_named_function(self):
         self.assertEvaluating("(define d (x) (+ x 1))\n(d 1)", equals="2")
+
+    def test_14_evaluating_an_undefined_symbol_raises_an_exception(self):
+        self.assertDoing("(a)", raises=SYMBOL_NOT_FOUND)
